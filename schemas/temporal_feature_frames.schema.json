@@ -1,0 +1,459 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "temporal_feature_frames.schema.json",
+  "title": "Temporal Action Engine V3 Feature Frame",
+  "description": "One traceable, side-isolated temporal feature observation. It is not an action truth label and cannot authorize training.",
+  "type": "object",
+  "required": [
+    "temporal_feature_id",
+    "coarse_action",
+    "evidence_state",
+    "person_ref",
+    "lock_epoch",
+    "anatomical_side",
+    "frame_index",
+    "timestamp",
+    "source_video_sha256",
+    "recording_group_id",
+    "rule_version",
+    "parameter_profile_id",
+    "parameter_profile_sha256",
+    "body_feature_state",
+    "hand_feature_state",
+    "object_feature_state",
+    "body_features_used",
+    "hand_features_used",
+    "object_features_used",
+    "body_motion_features",
+    "hand_motion_features",
+    "object_motion_features",
+    "source_frame_indices",
+    "source_segment_ids",
+    "source_hand_pose_ids",
+    "source_object_track_ids",
+    "source_interaction_ids",
+    "hard_boundary",
+    "boundary_reasons",
+    "status",
+    "reviewer",
+    "reviewed_at",
+    "training_approval",
+    "training_eligible"
+  ],
+  "properties": {
+    "temporal_feature_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coarse_action": {
+      "enum": [
+        "idle",
+        "reach",
+        "retract",
+        "lift",
+        "lower",
+        "move",
+        "carry",
+        "place",
+        "hold",
+        "release",
+        "rotate",
+        "push",
+        "pull",
+        "transition",
+        "unknown",
+        "lost"
+      ]
+    },
+    "evidence_state": {
+      "enum": ["normal", "transition", "unknown", "uncertain", "lost"]
+    },
+    "person_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lock_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "anatomical_side": {
+      "enum": ["left", "right", "bilateral"]
+    },
+    "frame_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "timestamp": {
+      "type": "number",
+      "minimum": 0
+    },
+    "source_video_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "recording_group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rule_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parameter_profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parameter_profile_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "body_feature_state": {
+      "enum": ["available", "uncertain", "missing", "lost", "unavailable"]
+    },
+    "hand_feature_state": {
+      "enum": [
+        "qualified",
+        "association_uncertain",
+        "insufficient_geometry",
+        "not_observed",
+        "lost",
+        "unavailable"
+      ]
+    },
+    "object_feature_state": {
+      "enum": ["available", "not_observed", "unavailable", "not_configured"]
+    },
+    "body_features_used": {
+      "type": "boolean"
+    },
+    "hand_features_used": {
+      "type": "boolean"
+    },
+    "object_features_used": {
+      "type": "boolean"
+    },
+    "body_motion_features": {
+      "type": ["object", "null"],
+      "properties": {
+        "body_points_used": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "detected_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "predicted_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "interpolated_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "missing_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "wrist_velocity_xy_body_scales_per_second": {
+          "type": ["array", "null"],
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "wrist_speed_body_scales_per_second": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "wrist_displacement_body_scales": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "wrist_extension_ratio": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "wrist_extension_rate_per_second": {
+          "type": ["number", "null"]
+        },
+        "motion_amplitude_body_scales": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "motion_direction": {
+          "enum": [
+            "up",
+            "down",
+            "extension",
+            "retraction",
+            "lateral",
+            "stationary",
+            "uncertain",
+            "unavailable"
+          ]
+        },
+        "required_joints_reliable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "hand_motion_features": {
+      "type": ["object", "null"],
+      "description": "Only real, quality-qualified Hand observations may populate this object. It is not grasp evidence.",
+      "properties": {
+        "hand_motion_feature": {
+          "type": ["object", "null"]
+        },
+        "hand_shape_feature": {
+          "type": ["object", "null"]
+        },
+        "quality_gate_version": {
+          "type": ["string", "null"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "object_motion_features": {
+      "type": ["object", "null"],
+      "description": "Must remain null while the real object layer is unavailable.",
+      "additionalProperties": true
+    },
+    "source_frame_indices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "integer", "minimum": 0}
+    },
+    "source_segment_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_hand_pose_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_object_track_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_interaction_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "hard_boundary": {
+      "type": "boolean"
+    },
+    "boundary_reasons": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "status": {
+      "enum": ["proposed", "uncertain"]
+    },
+    "reviewer": {
+      "type": "null"
+    },
+    "reviewed_at": {
+      "type": "null"
+    },
+    "training_approval": {
+      "const": "pending"
+    },
+    "training_eligible": {
+      "const": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["body_features_used"],
+        "properties": {"body_features_used": {"const": true}}
+      },
+      "then": {
+        "required": ["body_feature_state", "body_motion_features"],
+        "properties": {
+          "body_feature_state": {"enum": ["available", "uncertain"]},
+          "body_motion_features": {"type": "object"}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["hand_features_used"],
+        "properties": {"hand_features_used": {"const": true}}
+      },
+      "then": {
+        "required": ["hand_feature_state", "hand_motion_features", "source_hand_pose_ids"],
+        "properties": {
+          "hand_feature_state": {"const": "qualified"},
+          "hand_motion_features": {"type": "object"},
+          "source_hand_pose_ids": {"type": "array", "minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["object_features_used"],
+        "properties": {"object_features_used": {"const": true}}
+      },
+      "then": {
+        "required": ["object_feature_state", "object_motion_features", "source_object_track_ids"],
+        "properties": {
+          "object_feature_state": {"const": "available"},
+          "object_motion_features": {"type": "object"},
+          "source_object_track_ids": {"type": "array", "minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["hard_boundary"],
+        "properties": {"hard_boundary": {"const": true}}
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {"enum": ["uncertain", "lost"]},
+          "status": {"const": "uncertain"},
+          "hand_features_used": {"const": false},
+          "object_features_used": {"const": false},
+          "boundary_reasons": {"type": "array", "minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["status"],
+        "properties": {"status": {"const": "proposed"}}
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {"const": "normal"},
+          "coarse_action": {
+            "enum": [
+              "idle",
+              "reach",
+              "retract",
+              "lift",
+              "lower",
+              "move",
+              "carry",
+              "place",
+              "hold",
+              "release",
+              "rotate",
+              "push",
+              "pull"
+            ]
+          },
+          "body_feature_state": {"const": "available"},
+          "body_features_used": {"const": true},
+          "hard_boundary": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["coarse_action"],
+        "properties": {
+          "coarse_action": {"enum": ["transition", "unknown", "lost"]}
+        }
+      },
+      "then": {
+        "properties": {"status": {"const": "uncertain"}}
+      }
+    },
+    {
+      "if": {
+        "required": ["hand_feature_state"],
+        "properties": {
+          "hand_feature_state": {
+            "enum": [
+              "association_uncertain",
+              "insufficient_geometry",
+              "not_observed",
+              "lost",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "hand_features_used": {"const": false},
+          "hand_motion_features": {"const": null}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["object_feature_state"],
+        "properties": {
+          "object_feature_state": {
+            "enum": ["not_observed", "unavailable", "not_configured"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "object_features_used": {"const": false},
+          "object_motion_features": {"const": null}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["body_feature_state"],
+        "properties": {
+          "body_feature_state": {
+            "enum": ["missing", "lost", "unavailable"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "body_features_used": {"const": false},
+          "body_motion_features": {"const": null}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["coarse_action"],
+        "properties": {
+          "coarse_action": {"enum": ["carry", "place", "hold", "release"]}
+        }
+      },
+      "then": {
+        "properties": {
+          "object_feature_state": {"const": "available"},
+          "object_features_used": {"const": true},
+          "source_object_track_ids": {"type": "array", "minItems": 1},
+          "source_interaction_ids": {"type": "array", "minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["evidence_state"],
+        "properties": {"evidence_state": {"const": "lost"}}
+      },
+      "then": {
+        "properties": {
+          "coarse_action": {"const": "lost"},
+          "body_feature_state": {"const": "lost"},
+          "body_features_used": {"const": false},
+          "body_motion_features": {"const": null},
+          "hard_boundary": {"const": true},
+          "boundary_reasons": {"type": "array", "minItems": 1},
+          "status": {"const": "uncertain"}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["coarse_action"],
+        "properties": {"coarse_action": {"const": "lost"}}
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {"const": "lost"},
+          "body_feature_state": {"const": "lost"},
+          "body_features_used": {"const": false},
+          "body_motion_features": {"const": null},
+          "hard_boundary": {"const": true},
+          "boundary_reasons": {"type": "array", "minItems": 1},
+          "status": {"const": "uncertain"}
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

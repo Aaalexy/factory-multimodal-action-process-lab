@@ -1,0 +1,601 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hand_pose_frames.schema.json",
+  "title": "Hand Pose Frame",
+  "type": "object",
+  "required": [
+    "hand_pose_id",
+    "person_ref",
+    "lock_epoch",
+    "anatomical_side",
+    "frame_index",
+    "timestamp",
+    "crop_bbox",
+    "crop_transform",
+    "landmarks",
+    "landmark_count",
+    "confidence",
+    "detection_confidence",
+    "presence_confidence",
+    "tracking_confidence",
+    "raw_confidence_availability",
+    "observation_state",
+    "occlusion",
+    "source_video_sha256",
+    "recording_group_id",
+    "source_model_version",
+    "runtime_version",
+    "status",
+    "reviewer",
+    "reviewed_at",
+    "training_approval",
+    "training_eligible",
+    "evidence_type",
+    "association_checks"
+  ],
+  "properties": {
+    "hand_pose_id": {"type": "string", "minLength": 1},
+    "person_ref": {"type": "string", "minLength": 1},
+    "lock_epoch": {"type": "integer", "minimum": 0},
+    "anatomical_side": {"enum": ["left", "right"]},
+    "frame_index": {"type": "integer", "minimum": 0},
+    "timestamp": {"type": ["number", "null"], "minimum": 0},
+    "crop_bbox": {
+      "type": ["array", "null"],
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"type": "number"}
+    },
+    "crop_transform": {
+      "type": ["object", "null"],
+      "properties": {
+        "kind": {"const": "normalized_roi_to_source_pixels"},
+        "x_offset": {"type": "integer", "minimum": 0},
+        "y_offset": {"type": "integer", "minimum": 0},
+        "x_scale": {"type": "integer", "minimum": 1},
+        "y_scale": {"type": "integer", "minimum": 1},
+        "source_width": {"type": "integer", "minimum": 1},
+        "source_height": {"type": "integer", "minimum": 1}
+      }
+    },
+    "landmarks": {
+      "type": "array",
+      "maxItems": 21,
+      "items": {
+        "type": "object",
+        "required": [
+          "index", "x", "y", "z_roi_normalized", "visibility",
+          "presence", "observation_state"
+        ],
+        "properties": {
+          "index": {"type": "integer", "minimum": 0, "maximum": 20},
+          "x": {"type": "number", "minimum": 0},
+          "y": {"type": "number", "minimum": 0},
+          "z_roi_normalized": {"type": ["number", "null"]},
+          "visibility": {"type": ["number", "null"]},
+          "presence": {"type": ["number", "null"]},
+          "observation_state": {"const": "detected"}
+        }
+      }
+    },
+    "landmark_count": {"type": "integer", "minimum": 0, "maximum": 21},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "detection_confidence": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1
+    },
+    "presence_confidence": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1
+    },
+    "tracking_confidence": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1
+    },
+    "raw_confidence_availability": {"type": "object"},
+    "backend_state": {
+      "enum": ["available", "unavailable", "error"]
+    },
+    "backend_mode": {"enum": ["image", "video"]},
+    "backend_timestamp_ms": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "tracker_session_generation": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "tracker_reset_reason": {"type": ["string", "null"]},
+    "input_timestamp_raw": {
+      "type": ["number", "string", "null"]
+    },
+    "timestamp_validation_state": {
+      "enum": ["valid", "invalid"]
+    },
+    "roi_center_jump_ratio": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "roi_scale_change_ratio": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "observation_state": {
+      "enum": ["detected", "uncertain", "missing", "lost"]
+    },
+    "quality_state": {
+      "enum": [
+        "qualified",
+        "association_uncertain",
+        "insufficient_geometry",
+        "not_observed",
+        "lost"
+      ]
+    },
+    "quality_reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "validation_state": {
+      "enum": ["not_reviewed", "review_required", "not_evaluable"]
+    },
+    "action_feature_eligible": {"type": "boolean"},
+    "feature_eligibility_reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "quality_gate_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "occlusion": {"type": "string"},
+    "source_video_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "recording_group_id": {"type": "string", "minLength": 1},
+    "source_model_version": {"type": "string", "minLength": 1},
+    "runtime_version": {"type": ["string", "null"]},
+    "status": {"enum": ["proposed", "uncertain"]},
+    "reviewer": {"type": ["string", "null"]},
+    "reviewed_at": {"type": ["string", "null"]},
+    "training_approval": {"type": "string"},
+    "training_eligible": {"const": false},
+    "model_handedness_label": {"type": ["string", "null"]},
+    "model_handedness_score": {
+      "type": ["number", "null"], "minimum": 0, "maximum": 1
+    },
+    "inference_time_ms": {"type": ["number", "null"], "minimum": 0},
+    "reason": {"type": "string"},
+    "evidence_type": {"enum": ["real_hand_landmarker", "no_hand_geometry"]},
+    "association_checks": {
+      "type": "object",
+      "required": [
+        "body_side_source",
+        "model_handedness_used_for_assignment",
+        "closer_to_own_body_wrist",
+        "duplicate_across_sides",
+        "warnings"
+      ],
+      "properties": {
+        "body_side_source": {"type": "string"},
+        "model_handedness_used_for_assignment": {"const": false},
+        "closer_to_own_body_wrist": {"type": ["boolean", "null"]},
+        "duplicate_across_sides": {"type": "boolean"},
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "own_wrist_distance_roi_ratio": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "maximum_own_wrist_distance_roi_ratio": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "body_guide_observation_states": {
+          "type": "object",
+          "properties": {
+            "wrist": {"type": "string"},
+            "elbow": {"type": "string"},
+            "shoulder": {"type": "string"}
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["quality_gate_version"]
+      },
+      "then": {
+        "required": [
+          "backend_state",
+          "backend_mode",
+          "quality_state",
+          "quality_reasons",
+          "validation_state",
+          "action_feature_eligible",
+          "feature_eligibility_reasons"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {"observation_state": {"const": "detected"}},
+        "required": ["observation_state"]
+      },
+      "then": {
+        "properties": {
+          "landmarks": {"minItems": 21, "maxItems": 21},
+          "landmark_count": {"const": 21}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "observation_state": {"enum": ["missing", "lost"]}
+        },
+        "required": ["observation_state"]
+      },
+      "then": {
+        "properties": {
+          "landmarks": {"maxItems": 0},
+          "landmark_count": {"const": 0},
+          "status": {"const": "uncertain"},
+          "evidence_type": {"const": "no_hand_geometry"},
+          "action_feature_eligible": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "quality_state": {"const": "qualified"}
+        },
+        "required": ["quality_gate_version", "quality_state"]
+      },
+      "then": {
+        "properties": {
+          "backend_state": {"const": "available"},
+          "backend_mode": {"enum": ["image", "video"]},
+          "observation_state": {"const": "detected"},
+          "crop_bbox": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {"type": "number"}
+          },
+          "crop_transform": {
+            "type": "object",
+            "required": [
+              "kind",
+              "x_offset",
+              "y_offset",
+              "x_scale",
+              "y_scale",
+              "source_width",
+              "source_height"
+            ],
+            "properties": {
+              "kind": {"const": "normalized_roi_to_source_pixels"},
+              "x_offset": {"type": "integer", "minimum": 0},
+              "y_offset": {"type": "integer", "minimum": 0},
+              "x_scale": {"type": "integer", "minimum": 1},
+              "y_scale": {"type": "integer", "minimum": 1},
+              "source_width": {"type": "integer", "minimum": 1},
+              "source_height": {"type": "integer", "minimum": 1}
+            }
+          },
+          "landmarks": {"minItems": 21, "maxItems": 21},
+          "landmark_count": {"const": 21},
+          "evidence_type": {"const": "real_hand_landmarker"},
+          "status": {"const": "proposed"},
+          "validation_state": {"const": "not_reviewed"},
+          "action_feature_eligible": {"const": true},
+          "association_checks": {
+            "properties": {
+              "duplicate_across_sides": {"const": false},
+              "warnings": {"maxItems": 0},
+              "own_wrist_distance_roi_ratio": {
+                "type": "number",
+                "maximum": 0.3
+              },
+              "body_guide_observation_states": {
+                "required": ["wrist", "elbow"],
+                "properties": {
+                  "wrist": {"const": "detected"},
+                  "elbow": {"const": "detected"}
+                }
+              }
+            },
+            "required": [
+              "duplicate_across_sides",
+              "warnings",
+              "own_wrist_distance_roi_ratio",
+              "body_guide_observation_states"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "action_feature_eligible": {"const": true}
+        },
+        "required": ["quality_gate_version", "action_feature_eligible"]
+      },
+      "then": {
+        "properties": {
+          "quality_state": {"const": "qualified"},
+          "observation_state": {"const": "detected"},
+          "landmarks": {"minItems": 21, "maxItems": 21},
+          "landmark_count": {"const": 21}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "quality_state": {
+            "enum": [
+              "association_uncertain",
+              "insufficient_geometry",
+              "not_observed",
+              "lost"
+            ]
+          }
+        },
+        "required": ["quality_gate_version", "quality_state"]
+      },
+      "then": {
+        "properties": {
+          "action_feature_eligible": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "observation_state": {"const": "missing"}
+        },
+        "required": ["quality_gate_version", "observation_state"]
+      },
+      "then": {
+        "properties": {
+          "quality_state": {"const": "not_observed"},
+          "validation_state": {"const": "not_evaluable"},
+          "action_feature_eligible": {"const": false},
+          "status": {"const": "uncertain"},
+          "evidence_type": {"const": "no_hand_geometry"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "observation_state": {"const": "lost"}
+        },
+        "required": ["quality_gate_version", "observation_state"]
+      },
+      "then": {
+        "properties": {
+          "quality_state": {"const": "lost"},
+          "validation_state": {"const": "not_evaluable"},
+          "action_feature_eligible": {"const": false},
+          "status": {"const": "uncertain"},
+          "evidence_type": {"const": "no_hand_geometry"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "quality_gate_version": {"type": "string"},
+          "backend_state": {"const": "error"}
+        },
+        "required": ["quality_gate_version", "backend_state"]
+      },
+      "then": {
+        "properties": {
+          "action_feature_eligible": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend_mode": {"const": "image"}
+        },
+        "required": ["backend_mode"]
+      },
+      "then": {
+        "properties": {
+          "timestamp": {"type": "number", "minimum": 0},
+          "backend_timestamp_ms": {
+            "allOf": [{"type": "null"}, {"type": "integer"}]
+          },
+          "tracker_session_generation": {
+            "allOf": [{"type": "null"}, {"type": "integer"}]
+          },
+          "tracker_reset_reason": {
+            "allOf": [{"type": "null"}, {"type": "string"}]
+          },
+          "input_timestamp_raw": {
+            "allOf": [{"type": "null"}, {"type": "string"}]
+          },
+          "timestamp_validation_state": {
+            "allOf": [{"type": "null"}, {"type": "string"}]
+          },
+          "roi_center_jump_ratio": {
+            "allOf": [{"type": "null"}, {"type": "number"}]
+          },
+          "roi_scale_change_ratio": {
+            "allOf": [{"type": "null"}, {"type": "number"}]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend_mode": {"const": "video"}
+        },
+        "required": ["backend_mode"]
+      },
+      "then": {
+        "required": [
+          "backend_state",
+          "quality_state",
+          "quality_reasons",
+          "validation_state",
+          "action_feature_eligible",
+          "feature_eligibility_reasons",
+          "quality_gate_version",
+          "backend_timestamp_ms",
+          "tracker_session_generation",
+          "tracker_reset_reason",
+          "input_timestamp_raw",
+          "timestamp_validation_state",
+          "roi_center_jump_ratio",
+          "roi_scale_change_ratio"
+        ],
+        "properties": {
+          "tracker_session_generation": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"timestamp": {"type": "null"}},
+        "required": ["timestamp"]
+      },
+      "then": {
+        "required": [
+          "backend_mode",
+          "backend_state",
+          "observation_state",
+          "status",
+          "landmarks",
+          "landmark_count",
+          "evidence_type",
+          "action_feature_eligible",
+          "input_timestamp_raw",
+          "timestamp_validation_state"
+        ],
+        "properties": {
+          "backend_mode": {"const": "video"},
+          "backend_state": {"const": "error"},
+          "timestamp": {"type": "null"},
+          "backend_timestamp_ms": {"type": "null"},
+          "observation_state": {"const": "uncertain"},
+          "status": {"const": "uncertain"},
+          "landmarks": {"maxItems": 0},
+          "landmark_count": {"const": 0},
+          "evidence_type": {"const": "no_hand_geometry"},
+          "action_feature_eligible": {"const": false},
+          "timestamp_validation_state": {"const": "invalid"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {"backend_timestamp_ms": {"type": "null"}},
+        "required": ["backend_timestamp_ms"]
+      },
+      "then": {
+        "required": [
+          "backend_mode",
+          "backend_state",
+          "observation_state",
+          "status",
+          "landmarks",
+          "landmark_count",
+          "evidence_type",
+          "action_feature_eligible",
+          "input_timestamp_raw",
+          "timestamp_validation_state"
+        ],
+        "properties": {
+          "backend_mode": {"const": "video"},
+          "backend_state": {"const": "error"},
+          "timestamp": {"type": "null"},
+          "backend_timestamp_ms": {"type": "null"},
+          "observation_state": {"const": "uncertain"},
+          "status": {"const": "uncertain"},
+          "landmarks": {"maxItems": 0},
+          "landmark_count": {"const": 0},
+          "evidence_type": {"const": "no_hand_geometry"},
+          "action_feature_eligible": {"const": false},
+          "timestamp_validation_state": {"const": "invalid"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "timestamp_validation_state": {"const": "invalid"}
+        },
+        "required": ["timestamp_validation_state"]
+      },
+      "then": {
+        "required": [
+          "backend_mode",
+          "backend_state",
+          "timestamp",
+          "backend_timestamp_ms",
+          "observation_state",
+          "status",
+          "landmarks",
+          "landmark_count",
+          "evidence_type",
+          "action_feature_eligible",
+          "input_timestamp_raw"
+        ],
+        "properties": {
+          "backend_mode": {"const": "video"},
+          "backend_state": {"const": "error"},
+          "timestamp": {"type": "null"},
+          "backend_timestamp_ms": {"type": "null"},
+          "observation_state": {"const": "uncertain"},
+          "status": {"const": "uncertain"},
+          "landmarks": {"maxItems": 0},
+          "landmark_count": {"const": 0},
+          "evidence_type": {"const": "no_hand_geometry"},
+          "action_feature_eligible": {"const": false}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["input_timestamp_raw"]
+      },
+      "then": {
+        "required": ["timestamp_validation_state"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "timestamp_validation_state": {"const": "valid"}
+        },
+        "required": ["timestamp_validation_state"]
+      },
+      "then": {
+        "properties": {
+          "timestamp": {"type": "number", "minimum": 0},
+          "backend_timestamp_ms": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

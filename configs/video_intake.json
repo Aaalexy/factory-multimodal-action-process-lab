@@ -1,0 +1,16 @@
+{
+  "schema_version": "factory_video_intake_config_v1",
+  "maximum_upload_bytes": 2147483648,
+  "upload_chunk_bytes": 1048576,
+  "default_analysis_seconds": 12.0,
+  "preview_expiry_seconds": 120.0,
+  "preview_sequence_tolerance": 0,
+  "allowed_extensions": [".mp4"],
+  "listen_host": "127.0.0.1",
+  "validation_flags": {
+    "factory_camera_validated": false,
+    "production_action_model_ready": false,
+    "external_factory_validated": false,
+    "production_process_model_ready": false
+  }
+}

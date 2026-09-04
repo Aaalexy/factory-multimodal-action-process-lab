@@ -1,0 +1,23 @@
+enabled: true
+movement_start_threshold: 0.42
+movement_stop_threshold: 0.20
+start_confirmation_seconds: 0.30
+stop_confirmation_seconds: 0.40
+# Bottom pose phases remain observable from 0.20 s; the outward stable layer
+# uses stable_event_minimum_seconds below.
+minimum_segment_seconds: 0.20
+short_gap_merge_seconds: 0.50
+minimum_valid_keypoint_ratio: 0.55
+maximum_uncertain_ratio: 0.45
+stable_event_minimum_seconds: 1.00
+short_event_minimum_seconds: 0.50
+minimum_detected_evidence_ratio: 0.65
+short_event_minimum_detected_ratio: 0.75
+maximum_prediction_ratio: 0.35
+action_switch_confirmation_seconds: 0.30
+action_end_hysteresis_seconds: 0.40
+generic_move_minimum_seconds: 1.00
+idle_minimum_seconds: 1.00
+minimum_directional_displacement: 0.05
+representative_frame_strategy: highest_quality_near_middle
+distance_normalization_method: torso_or_bbox_scale

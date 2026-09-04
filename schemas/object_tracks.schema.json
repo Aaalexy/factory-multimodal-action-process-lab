@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "object_tracks.schema.json",
+  "title": "Object Track",
+  "type": "object",
+  "required": [
+    "object_track_id", "object_class", "start_time", "end_time", "bbox",
+    "confidence", "observation_state", "occlusion", "source_video_sha256",
+    "source_model_version", "status", "training_eligible"
+  ],
+  "properties": {
+    "object_track_id": {"type": "string"},
+    "object_class": {"type": "string"},
+    "start_time": {"type": "number", "minimum": 0},
+    "end_time": {"type": "number", "minimum": 0},
+    "bbox": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"type": "number"}
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "observation_state": {
+      "enum": ["detected", "predicted", "interpolated", "missing", "lost"]
+    },
+    "occlusion": {"type": "string"},
+    "source_video_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_model_version": {"type": "string"},
+    "status": {"enum": ["proposed", "uncertain"]},
+    "training_eligible": {"const": false},
+    "reviewer": {"type": ["string", "null"]},
+    "reviewed_at": {"type": ["string", "null"]},
+    "training_approval": {"type": "string"},
+    "recording_group_id": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Factory Multimodal Action Process Lab</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div>
+        <p class="eyebrow">FACTORY MULTIMODAL</p>
+        <h1>Action Process Lab</h1>
+      </div>
+    </div>
+    <nav class="mode-switch" aria-label="分析模式">
+      <button id="video-mode-button" class="mode active">Video Analysis</button>
+      <button id="camera-mode-button" class="mode">Camera</button>
+      <button id="camera-stop-button" class="mode camera-stop" disabled>Stop</button>
+    </nav>
+    <div class="top-status">
+      <span id="run-state" class="status-dot">loading</span>
+      <span id="camera-state" class="state-chip stopped">camera stopped</span>
+      <span class="privacy-tag">ANONYMOUS / NO IDENTITY</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="process-strip panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">PROPOSED PROCESS LAYER</p>
+          <h2>工序候选时间轴</h2>
+        </div>
+        <span id="process-state" class="state-chip unavailable">unavailable</span>
+      </div>
+      <div id="process-timeline" class="process-timeline"></div>
+      <p id="process-reason" class="muted"></p>
+    </section>
+
+    <section class="intake-panel panel" aria-labelledby="intake-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LOCAL MP4 INTAKE</p>
+          <h2 id="intake-title">本地视频上传与有界分析</h2>
+        </div>
+        <span id="intake-state" class="state-chip unavailable">pending</span>
+      </div>
+      <div class="intake-grid">
+        <div class="intake-file-column">
+          <label class="file-picker" for="video-file-input">
+            <span>选择本地 MP4</span>
+            <input id="video-file-input" type="file" accept="video/mp4,.mp4">
+          </label>
+          <button id="video-upload-button" class="primary-button" type="button" disabled>上传并探测</button>
+          <div class="upload-progress" aria-label="上传进度">
+            <i><em id="upload-progress-bar"></em></i>
+            <span id="upload-progress-text">尚未选择文件</span>
+          </div>
+          <p id="upload-file-summary" class="muted">文件仅写入本项目受控 intake 目录；原文件名不用于存储路径。</p>
+        </div>
+        <div class="intake-range-column">
+          <label>起始时间（秒）<input id="analysis-start-time" type="number" min="0" step="0.125" value="0"></label>
+          <label>分析时长（秒）<input id="analysis-duration" type="number" min="0.125" step="0.125" value="12"></label>
+          <label class="check-row"><input id="full-video-toggle" type="checkbox"><span>显式分析完整视频</span></label>
+          <label class="check-row"><input id="upload-hand-toggle" type="checkbox" checked><span>真实 Hand Pose（默认开启）</span></label>
+        </div>
+        <div class="intake-config-column">
+          <label>Body provider
+            <select id="upload-body-provider">
+              <option value="prefer_cuda" selected>prefer_cuda</option>
+              <option value="require_cuda">require_cuda</option>
+              <option value="cpu">cpu</option>
+              <option value="auto">auto</option>
+            </select>
+          </label>
+          <label>Recording group
+            <input id="recording-group-id" type="text" value="recording_group_unassigned" maxlength="128">
+          </label>
+          <div class="intake-action-row">
+            <button id="video-preview-button" type="button" disabled>预览人物候选</button>
+            <button id="video-analysis-start-button" class="primary-button" type="button" disabled>开始分析</button>
+            <button id="video-analysis-cancel-button" type="button" disabled>取消分析</button>
+          </div>
+        </div>
+      </div>
+      <div class="intake-result-grid">
+        <div id="upload-metadata" class="upload-metadata">等待真实视频探测。</div>
+        <div class="preview-stage">
+          <img id="video-preview-image" alt="上传视频起始帧真实人物候选预览">
+          <canvas id="video-preview-canvas" aria-label="点击选择初始匿名人物"></canvas>
+          <p id="video-preview-message">上传完成后先预览并选择一个匿名人物。</p>
+        </div>
+        <div class="job-readout">
+          <div><span>作业阶段</span><strong id="video-job-stage">pending</strong></div>
+          <div><span>进度</span><strong id="video-job-progress">0.0%</strong></div>
+          <div><span>耗时</span><strong id="video-job-elapsed">0.0 s</strong></div>
+          <p id="video-job-message">尚未启动分析。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace-grid">
+      <section class="viewer panel">
+        <div class="viewer-heading">
+          <div>
+            <p class="eyebrow">REAL VIDEO + REAL POSE EVIDENCE</p>
+            <h2 id="video-title">真实视频分析</h2>
+          </div>
+          <div class="overlay-controls" aria-label="叠加显示">
+            <label>
+              <input id="body-pose-toggle" type="checkbox" checked>
+              <span>Body Pose</span>
+            </label>
+            <label>
+              <input id="hand-pose-toggle" type="checkbox" checked>
+              <span>Hand Pose</span>
+            </label>
+            <label class="renderer-mode-control" title="经典人物使用青色COCO骨架与洋红色派生视觉几何">
+              <span>Body Skin</span>
+              <select id="body-renderer-mode" aria-label="Body Pose绘制样式">
+                <option value="classic" selected>经典人物</option>
+                <option value="evidence">证据骨架</option>
+              </select>
+            </label>
+          </div>
+          <div class="lock-readout">
+            <span id="person-ref">unlocked</span>
+            <span id="lock-state" class="state-chip uncertain">uncertain</span>
+          </div>
+        </div>
+        <div class="video-stage">
+          <video id="video" controls preload="metadata" src="/media/video"></video>
+          <img id="camera-view" class="camera-view hidden" alt="本机USB Camera实时画面，不保存录像">
+          <canvas id="pose-canvas" aria-label="真实Pose与匿名人物框"></canvas>
+          <div id="lost-banner" class="lost-banner hidden">POSE EVIDENCE LOST</div>
+          <div class="action-hud">
+            <span class="hud-label">STABLE ACTION</span>
+            <strong id="current-action">no stable event</strong>
+            <span id="current-side">—</span>
+            <span id="current-action-duration" class="hud-duration">—</span>
+          </div>
+          <div id="manual-relock-controls" class="manual-relock-controls hidden">
+            <div class="manual-relock-heading">
+              <strong>匿名人物选择</strong>
+              <span id="manual-relock-message">点击“选择人物”后点选候选框。</span>
+            </div>
+            <div class="manual-relock-actions">
+              <button id="camera-select-person-button" type="button">选择人物</button>
+              <button id="camera-confirm-relock-button" type="button" disabled>确认 Relock</button>
+              <button id="camera-cancel-relock-button" type="button" disabled>取消 Relock 并保持当前状态</button>
+            </div>
+          </div>
+        </div>
+        <div class="scrub-meta">
+          <span id="clock">00:00.000</span>
+          <span class="current-evidence-readout">
+            <span id="frame-evidence">waiting for evidence</span>
+            <span id="current-evidence-state" class="state-chip uncertain">uncertain</span>
+          </span>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-section evidence-timeline-section">
+            <div class="timeline-label-row">
+              <h3>连续证据时间线</h3>
+              <span><b id="evidence-track-source">loading</b> · 点击区间跳转</span>
+            </div>
+            <div id="evidence-timeline" class="evidence-timeline" aria-label="连续证据时间线"></div>
+          </div>
+          <div class="timeline-section stable-timeline-section">
+            <div class="timeline-label-row">
+              <h3>稳定动作时间线</h3>
+              <span>仅使用 action_events · 点击事件跳转</span>
+            </div>
+            <div id="action-timeline" class="action-timeline" aria-label="稳定动作时间线"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="evidence panel">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">EVIDENCE INSPECTOR</p>
+            <h2>持续时间与证据</h2>
+          </div>
+        </div>
+        <dl class="metric-grid">
+          <div><dt>时间</dt><dd id="evidence-time">—</dd></div>
+          <div><dt>动作持续</dt><dd id="action-duration">—</dd></div>
+          <div><dt>人物候选</dt><dd id="candidate-count">0</dd></div>
+          <div><dt>Lock epoch</dt><dd id="lock-epoch">0</dd></div>
+        </dl>
+        <div class="evidence-bars">
+          <div><span>detected</span><b id="detected-value">0.00</b><i><em id="detected-bar"></em></i></div>
+          <div><span>predicted</span><b id="predicted-value">0.00</b><i><em id="predicted-bar"></em></i></div>
+          <div><span>interpolated</span><b id="interpolated-value">0.00</b><i><em id="interpolated-bar"></em></i></div>
+          <div><span>missing</span><b id="missing-value">1.00</b><i><em id="missing-bar"></em></i></div>
+        </div>
+        <div class="layer-card hand-card">
+          <div class="hand-card-heading">
+            <h3>真实手部关键点</h3>
+            <span id="hand-model-version" class="model-version">not_configured</span>
+          </div>
+          <div class="hand-backend-summary">
+            <div>
+              <span class="hand-field-label">BACKEND STATE</span>
+              <span id="hand-backend-state" class="state-chip unavailable">unavailable</span>
+            </div>
+            <div class="hand-runtime-meta">
+              <span>provider <b id="hand-runtime-provider">unavailable</b></span>
+              <span>GPU <b id="hand-gpu-status">not_configured</b></span>
+              <span>mode <b id="hand-backend-mode">not_configured</b></span>
+              <span>quality gate <b id="hand-quality-gate-version">not_configured</b></span>
+              <span>inference mean / p50 / p95 <b id="hand-inference-percentiles">not_evaluable</b></span>
+              <span>current geometry <b id="hand-drawable-geometry">missing</b></span>
+              <span>association <b id="hand-association-warning">none observed</b></span>
+              <span>action feature use <b id="hand-action-feature-use">not_consumed_by_current_action_naming</b></span>
+            </div>
+          </div>
+          <div class="hand-state-grid">
+            <article class="hand-side-card">
+              <div class="hand-side-heading"><span class="hand-side left">LEFT</span><span>anatomical</span></div>
+              <dl class="hand-quality-detail">
+                <div><dt>observation</dt><dd><span id="left-hand-observation" class="state-chip missing">missing</span></dd></div>
+                <div><dt>quality</dt><dd><span id="left-hand-quality" class="state-chip not_observed">not_observed</span></dd></div>
+                <div><dt>validation</dt><dd><span id="left-hand-validation" class="state-chip not_evaluable">not_evaluable</span></dd></div>
+                <div><dt>action feature</dt><dd><span id="left-hand-eligible" class="state-chip not_eligible">not_eligible</span></dd></div>
+              </dl>
+              <p id="left-hand-binding" class="hand-binding">no bound record</p>
+              <p id="left-hand-quality-reasons" class="hand-quality-reason">no current hand evidence</p>
+            </article>
+            <article class="hand-side-card">
+              <div class="hand-side-heading"><span class="hand-side right">RIGHT</span><span>anatomical</span></div>
+              <dl class="hand-quality-detail">
+                <div><dt>observation</dt><dd><span id="right-hand-observation" class="state-chip missing">missing</span></dd></div>
+                <div><dt>quality</dt><dd><span id="right-hand-quality" class="state-chip not_observed">not_observed</span></dd></div>
+                <div><dt>validation</dt><dd><span id="right-hand-validation" class="state-chip not_evaluable">not_evaluable</span></dd></div>
+                <div><dt>action feature</dt><dd><span id="right-hand-eligible" class="state-chip not_eligible">not_eligible</span></dd></div>
+              </dl>
+              <p id="right-hand-binding" class="hand-binding">no bound record</p>
+              <p id="right-hand-quality-reasons" class="hand-quality-reason">no current hand evidence</p>
+            </article>
+          </div>
+          <p class="muted">左右始终按人物自身解剖学方向；手点不等同真实抓握。not_reviewed 不是人工确认，action-feature eligible 也不等于训练许可或已参与当前动作命名。</p>
+        </div>
+        <div class="layer-card">
+          <h3>稳定动作证据</h3>
+          <dl class="evidence-detail">
+            <div><dt>Direct support segments</dt><dd id="source-segment-ids">—</dd></div>
+            <div><dt>身体点</dt><dd id="body-points-used">未记录</dd></div>
+            <div><dt>真实手点</dt><dd id="hand-evidence-detail">missing</dd></div>
+            <div><dt>可见性</dt><dd id="event-visibility">—</dd></div>
+            <div><dt>Event span</dt><dd id="event-span">—</dd></div>
+            <div><dt>Observed support</dt><dd id="event-observed-support">—</dd></div>
+            <div><dt>Bounded gap</dt><dd id="event-bounded-gap">—</dd></div>
+            <div><dt>Gap source segments</dt><dd id="bounded-gap-source-segment-ids">—</dd></div>
+            <div><dt>Merge provenance</dt><dd id="event-merge-provenance">—</dd></div>
+            <div><dt>稳定化</dt><dd id="stabilization-reason">—</dd></div>
+            <div><dt>抑制 / 合并</dt><dd id="fragment-reason">—</dd></div>
+          </dl>
+          <details class="raw-evidence">
+            <summary>查看原始 pose_segments 证据</summary>
+            <div id="source-segment-detail" class="source-segment-detail">无稳定事件</div>
+          </details>
+        </div>
+        <div class="layer-card">
+          <h3>零件与交互</h3>
+          <div id="object-layer" class="layer-row"></div>
+          <div id="interaction-layer" class="layer-row"></div>
+          <p class="muted">腕点—零件关系只能成为 derived interaction candidate；不等同真实抓握。</p>
+        </div>
+        <div class="layer-card">
+          <h3>模型与数据状态</h3>
+          <div id="provider-states"></div>
+          <div id="model-states"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="footer-stats panel">
+      <div><span>POSE FRAMES</span><strong id="pose-count">0</strong></div>
+      <div><span>HAND DETECTED FRAMES</span><strong id="hand-detected-count">0</strong></div>
+      <div><span>HAND UNCERTAIN FRAMES</span><strong id="hand-uncertain-count">0</strong></div>
+      <div><span>HAND MISSING FRAMES</span><strong id="hand-missing-count">0</strong></div>
+      <div><span>HAND QUALIFIED OBS</span><strong id="hand-qualified-count">0</strong></div>
+      <div><span>ASSOCIATION UNCERTAIN OBS</span><strong id="hand-association-uncertain-count">0</strong></div>
+      <div><span>INSUFFICIENT GEOMETRY OBS</span><strong id="hand-insufficient-geometry-count">0</strong></div>
+      <div><span>HAND NOT OBSERVED</span><strong id="hand-not-observed-count">0</strong></div>
+      <div><span>ACTION-FEATURE ELIGIBLE OBS</span><strong id="hand-eligible-observation-count">0</strong></div>
+      <div><span>STABLE ACTIONS</span><strong id="action-count">0</strong></div>
+      <div><span>STABLE &lt; 1 S</span><strong id="subsecond-action-count">0</strong></div>
+      <div><span>SUPPRESSED</span><strong id="suppressed-count">0</strong></div>
+      <div><span>MERGED</span><strong id="merged-count">0</strong></div>
+      <div><span>EVIDENCE COVERAGE</span><strong id="timeline-coverage">0.0%</strong></div>
+      <div><span>RAW ACTION SWITCH</span><strong id="raw-switch-rate">0.0%</strong></div>
+      <div><span>NORMAL EVENT SPAN</span><strong id="normal-action-coverage">0.0%</strong></div>
+      <div><span>NORMAL OBSERVED SUPPORT</span><strong id="normal-observed-support-coverage">not recorded</strong></div>
+      <div><span>UNKNOWN + UNCERTAIN</span><strong id="unknown-uncertain-coverage">0.0%</strong></div>
+      <div><span>OBJECT TRACKS</span><strong id="object-count">0</strong></div>
+      <div><span>INTERACTIONS</span><strong id="interaction-count">0</strong></div>
+      <div><span>PROCESS STEPS</span><strong id="step-count">0</strong></div>
+      <div class="truth-note">所有自动语义默认 proposed / uncertain，training eligible = false</div>
+    </section>
+  </main>
+  <script src="/classic_body_pose_renderer.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pose_segments.schema.json",
+  "title": "Pose Segment",
+  "type": "object",
+  "required": [
+    "segment_id", "action", "person_ref", "lock_epoch", "anatomical_side",
+    "start_time", "end_time", "status", "observation_state",
+    "source_video_sha256", "training_eligible"
+  ],
+  "properties": {
+    "segment_id": {"type": "string", "minLength": 1},
+    "action": {
+      "enum": ["idle", "reach", "retract", "lift", "lower", "move", "carry",
+        "place", "hold", "release", "rotate", "push", "pull", "transition",
+        "unknown", "lost"]
+    },
+    "person_ref": {"type": "string"},
+    "lock_epoch": {"type": "integer", "minimum": 0},
+    "anatomical_side": {"enum": ["left", "right", "bilateral", "unknown"]},
+    "start_time": {"type": "number", "minimum": 0},
+    "end_time": {"type": "number", "minimum": 0},
+    "status": {"enum": ["proposed", "uncertain", "lost"]},
+    "observation_state": {
+      "enum": ["detected", "predicted", "interpolated", "missing", "lost"]
+    },
+    "source_video_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "training_eligible": {"const": false}
+  },
+  "additionalProperties": true
+}

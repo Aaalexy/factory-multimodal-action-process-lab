@@ -1,0 +1,36 @@
+{
+  "schema_version": "public_camera_adaptation_inventory_v1",
+  "project": "Factory Multimodal Action Process Lab",
+  "source_access": "not_distributed",
+  "public_scope": "High-level adaptation record with private source names, paths, sizes, hashes, and timestamps removed.",
+  "entries": [
+    {
+      "target_path": "src/web/static/classic_body_pose_renderer.js",
+      "adapted_concepts": ["COCO-17 topology", "status-aware rendering", "visual-only derived geometry"],
+      "purpose": "Render body-pose evidence without writing derived drawing points into analysis data."
+    },
+    {
+      "target_path": "src/camera/frame_source.py",
+      "adapted_concepts": ["USB camera lifecycle", "timeout handling", "monotonic timestamps", "explicit release"],
+      "purpose": "Provide a bounded local OpenCV camera source."
+    },
+    {
+      "target_path": "src/camera/controller.py",
+      "adapted_concepts": ["resource ownership", "startup", "cancellation", "release"],
+      "purpose": "Coordinate local camera resources and the browser review API."
+    },
+    {
+      "target_path": "src/camera/contracts.py",
+      "adapted_concepts": ["explicit camera states"],
+      "purpose": "Keep device state and failure handling explicit."
+    },
+    {
+      "target_path": "configs/camera.json",
+      "adapted_concepts": ["local device configuration", "validation flags"],
+      "purpose": "Keep local camera configuration bounded and validation claims disabled by default."
+    }
+  ],
+  "excluded_components": [
+    "Prior web applications, recording pipelines, caches, outputs, packages, environments, and unrelated models were not imported."
+  ]
+}

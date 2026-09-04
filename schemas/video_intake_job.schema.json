@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "video_intake_job.schema.json",
+  "title": "Factory local video intake job",
+  "type": "object",
+  "required": [
+    "job_id",
+    "state",
+    "progress",
+    "hand_enabled",
+    "body_provider_policy"
+  ],
+  "properties": {
+    "job_id": {"type": ["string", "null"]},
+    "state": {
+      "enum": [
+        "pending",
+        "uploading",
+        "probing",
+        "ready",
+        "queued",
+        "gpu_warming_up",
+        "analyzing",
+        "writing",
+        "completed",
+        "cancelling",
+        "cancelled",
+        "failed"
+      ]
+    },
+    "progress": {"type": "number", "minimum": 0, "maximum": 1},
+    "hand_enabled": {"type": "boolean"},
+    "body_provider_policy": {
+      "enum": ["auto", "prefer_cuda", "require_cuda", "cpu"]
+    },
+    "public_error": {"type": ["string", "null"]},
+    "result": {"type": ["object", "null"]}
+  },
+  "additionalProperties": true
+}

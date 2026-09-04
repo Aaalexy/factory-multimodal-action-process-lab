@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "interaction_events.schema.json",
+  "title": "Derived Interaction Event",
+  "type": "object",
+  "required": [
+    "interaction_id", "person_ref", "lock_epoch", "anatomical_side",
+    "object_track_id", "interaction_type", "start_time", "end_time",
+    "evidence_type", "evidence_confidence", "status", "training_eligible"
+  ],
+  "properties": {
+    "interaction_id": {"type": "string"},
+    "person_ref": {"type": "string"},
+    "lock_epoch": {"type": "integer", "minimum": 0},
+    "anatomical_side": {"enum": ["left", "right", "bilateral", "unknown"]},
+    "object_track_id": {"type": "string"},
+    "interaction_type": {"type": "string"},
+    "start_time": {"type": "number", "minimum": 0},
+    "end_time": {"type": "number", "minimum": 0},
+    "evidence_type": {"const": "derived_interaction_candidate"},
+    "evidence_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "status": {"enum": ["proposed", "uncertain"]},
+    "training_eligible": {"const": false}
+  },
+  "additionalProperties": true
+}

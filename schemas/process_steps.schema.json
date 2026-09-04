@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "process_steps.schema.json",
+  "title": "Process Step Candidate",
+  "type": "object",
+  "required": [
+    "process_step_id", "process_name", "involved_object_classes",
+    "source_action_event_ids", "source_interaction_ids", "start_time",
+    "end_time", "predecessor_step_ids", "completion_evidence",
+    "confidence", "status", "review_state", "training_eligible"
+  ],
+  "properties": {
+    "process_step_id": {"type": "string"},
+    "process_name": {"type": "string"},
+    "involved_object_classes": {"type": "array", "items": {"type": "string"}},
+    "source_action_event_ids": {"type": "array", "items": {"type": "string"}},
+    "source_interaction_ids": {"type": "array", "items": {"type": "string"}},
+    "start_time": {"type": "number", "minimum": 0},
+    "end_time": {"type": "number", "minimum": 0},
+    "predecessor_step_ids": {"type": "array", "items": {"type": "string"}},
+    "completion_evidence": {"type": "array", "items": {"type": "string"}},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "status": {
+      "enum": ["proposed", "uncertain", "not_observed", "unavailable"]
+    },
+    "review_state": {"type": "string"},
+    "training_eligible": {"const": false},
+    "reviewer": {"type": ["string", "null"]},
+    "reviewed_at": {"type": ["string", "null"]},
+    "training_approval": {"type": "string"},
+    "source_video_sha256": {"type": "string"},
+    "recording_group_id": {"type": ["string", "null"]},
+    "person_ref": {"type": ["string", "null"]},
+    "lock_epoch": {"type": ["integer", "null"]},
+    "source_model_version": {"type": "string"}
+  },
+  "additionalProperties": true
+}

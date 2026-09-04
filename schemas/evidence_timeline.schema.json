@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence_timeline.schema.json",
+  "title": "Continuous Pose Evidence Timeline Interval",
+  "type": "object",
+  "required": [
+    "evidence_interval_id",
+    "evidence_state",
+    "action",
+    "person_ref",
+    "lock_epoch",
+    "anatomical_side",
+    "start_time",
+    "end_time",
+    "duration_seconds",
+    "observation_state",
+    "continuity_kind",
+    "continuity_reasons",
+    "source_segment_ids",
+    "source_video_sha256",
+    "status",
+    "stabilization_reasons",
+    "training_eligible"
+  ],
+  "properties": {
+    "evidence_interval_id": {"type": "string", "minLength": 1},
+    "evidence_state": {
+      "enum": ["normal", "transition", "unknown", "uncertain", "lost"]
+    },
+    "action": {
+      "enum": [
+        "idle", "reach", "retract", "lift", "lower", "move", "carry",
+        "place", "hold", "release", "rotate", "push", "pull", "transition",
+        "unknown", "lost"
+      ]
+    },
+    "person_ref": {"type": "string", "minLength": 1},
+    "lock_epoch": {"type": "integer", "minimum": 0},
+    "anatomical_side": {
+      "enum": ["left", "right", "bilateral", "unknown"]
+    },
+    "start_time": {"type": "number", "minimum": 0},
+    "end_time": {"type": "number", "minimum": 0},
+    "duration_seconds": {"type": "number", "minimum": 0},
+    "observation_state": {
+      "enum": [
+        "detected", "predicted", "interpolated", "missing", "uncertain",
+        "lost"
+      ]
+    },
+    "continuity_kind": {
+      "enum": ["observed", "bounded_uncertain_gap", "hard_boundary"]
+    },
+    "continuity_reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_segment_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_video_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "status": {"enum": ["proposed", "uncertain", "lost"]},
+    "stabilization_reasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "display_eligible": {"const": true},
+    "training_eligible": {"const": false}
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": ["evidence_state"],
+        "properties": {"evidence_state": {"const": "lost"}}
+      },
+      "then": {
+        "properties": {
+          "action": {"const": "lost"},
+          "observation_state": {"const": "lost"},
+          "continuity_kind": {"const": "hard_boundary"},
+          "status": {"const": "lost"}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["continuity_kind"],
+        "properties": {
+          "continuity_kind": {"const": "bounded_uncertain_gap"}
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence_state": {"const": "uncertain"},
+          "status": {"const": "uncertain"}
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["evidence_state"],
+        "properties": {"evidence_state": {"const": "normal"}}
+      },
+      "then": {
+        "properties": {"status": {"const": "proposed"}}
+      }
+    }
+  ],
+  "additionalProperties": true
+}

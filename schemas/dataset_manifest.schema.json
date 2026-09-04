@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dataset_manifest.schema.json",
+  "title": "Dataset Manifest Item",
+  "type": "object",
+  "required": [
+    "schema_version", "source_video_sha256", "recording_group_id",
+    "person_ref", "lock_epoch", "source_model_version", "status",
+    "training_eligible", "reviewer", "reviewed_at", "training_approval", "split"
+  ],
+  "properties": {
+    "schema_version": {"const": "dataset_manifest_v1"},
+    "source_video_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "recording_group_id": {"type": "string"},
+    "person_ref": {"type": "string"},
+    "lock_epoch": {"type": "integer", "minimum": 0},
+    "source_model_version": {"type": "string"},
+    "status": {"enum": ["proposed", "uncertain"]},
+    "training_eligible": {"const": false},
+    "reviewer": {"type": ["string", "null"]},
+    "reviewed_at": {"type": ["string", "null"]},
+    "training_approval": {"type": "string"},
+    "split": {"enum": ["unassigned", "train", "dev", "test"]}
+  },
+  "additionalProperties": true
+}

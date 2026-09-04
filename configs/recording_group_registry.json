@@ -1,0 +1,24 @@
+{
+  "schema_version": "recording_group_registry_v1",
+  "split_policy": {
+    "random_frame_split_allowed": false,
+    "minimum_independent_groups_before_test_split": 3,
+    "current_test_split_status": "not_available"
+  },
+  "groups": [
+    {
+      "recording_group_id": "recording_group_sample_ab",
+      "video_name_patterns": ["sample_video_A", "sample_video_B"],
+      "relationship": "same_continuous_recording_same_view",
+      "split": "unassigned",
+      "human_confirmed": true
+    },
+    {
+      "recording_group_id": "recording_group_sample_c",
+      "video_name_patterns": ["sample_video_C"],
+      "relationship": "separate_recording_and_view",
+      "split": "unassigned",
+      "human_confirmed": true
+    }
+  ]
+}

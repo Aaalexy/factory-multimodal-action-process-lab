@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recording_group_registry.schema.json",
+  "title": "Recording Group Registry",
+  "type": "object",
+  "required": ["schema_version", "split_policy", "groups"],
+  "properties": {
+    "schema_version": {"const": "recording_group_registry_v1"},
+    "split_policy": {
+      "type": "object",
+      "required": [
+        "random_frame_split_allowed",
+        "minimum_independent_groups_before_test_split",
+        "current_test_split_status"
+      ],
+      "properties": {
+        "random_frame_split_allowed": {"const": false},
+        "minimum_independent_groups_before_test_split": {"minimum": 3},
+        "current_test_split_status": {"const": "not_available"}
+      }
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "recording_group_id", "video_name_patterns", "relationship", "split"
+        ],
+        "properties": {
+          "recording_group_id": {"type": "string"},
+          "video_name_patterns": {
+            "type": "array", "minItems": 1, "items": {"type": "string"}
+          },
+          "relationship": {"type": "string"},
+          "split": {"enum": ["unassigned", "train", "dev", "test"]}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

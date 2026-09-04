@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "model_evaluation_manifest.schema.json",
+  "title": "Model Evaluation Manifest",
+  "type": "object",
+  "required": [
+    "schema_version", "source_model_version", "status",
+    "ground_truth_required", "metrics", "targets"
+  ],
+  "properties": {
+    "schema_version": {"const": "model_evaluation_manifest_v1"},
+    "source_model_version": {"type": "string"},
+    "status": {"enum": ["not_evaluable", "evaluated"]},
+    "ground_truth_required": {"type": "boolean"},
+    "metrics": {"type": "object"},
+    "targets": {
+      "type": "object",
+      "required": ["false_production_conclusions"],
+      "properties": {"false_production_conclusions": {"const": 0}}
+    }
+  },
+  "additionalProperties": true
+}

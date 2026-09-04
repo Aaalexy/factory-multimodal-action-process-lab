@@ -1,0 +1,79 @@
+{
+  "schema_version": "factory_multimodal_project_config_v1",
+  "project": "Factory Multimodal Action Process Lab",
+  "pose_model": {
+    "path": "models/yolov8n-pose.onnx",
+    "confidence_threshold": 0.25,
+    "keypoint_threshold": 0.25,
+    "sample_fps": 8.0
+  },
+  "hand_pose": {
+    "backend": "mediapipe_hand_landmarker",
+    "path": "models/hand_pose/hand_landmarker.task",
+    "version": "float16/1",
+    "runtime": "mediapipe==0.10.35",
+    "device": "CPU",
+    "landmarks_per_hand": 21,
+    "body_guided_full_resolution_roi": true,
+    "model_handedness_overrides_anatomical_side": false,
+    "missing_geometry_policy": "empty_landmarks",
+    "quality_gate": {
+      "version": "hand_quality_gate_v1",
+      "maximum_own_wrist_distance_roi_ratio": 0.3,
+      "required_landmark_count": 21,
+      "require_unique_landmark_indices_0_to_20": true,
+      "reject_association_warnings": true,
+      "reject_duplicate_across_sides": true,
+      "require_direct_body_wrist_and_elbow": true,
+      "note": "Feature eligibility is fail-closed and does not change the original observation state."
+    },
+    "status": "available_for_technical_validation"
+  },
+  "action_stability": {
+    "analysis_fps": 8.0,
+    "stable_event_minimum_seconds": 1.2,
+    "short_directional_event_minimum_seconds": 1.0,
+    "short_gap_merge_seconds": 0.4,
+    "start_confirmation_seconds": 0.5,
+    "stop_confirmation_seconds": 0.5,
+    "temporal_context_seconds": 2.5,
+    "bounded_uncertain_gap_seconds": 0.375,
+    "lost_is_hard_boundary": true,
+    "identity_and_lock_epoch_are_hard_boundaries": true
+  },
+  "legacy_configuration": {
+    "action_analysis_yaml": "configs/action_analysis.yaml",
+    "action_analysis_yaml_role": "migrated_phase_a_reference_not_loaded_by_phase_b_runtime"
+  },
+  "object_perception": {
+    "provider": null,
+    "status": "not_configured",
+    "model_version": null
+  },
+  "temporal_action_model": {
+    "provider": null,
+    "status": "not_configured",
+    "context_seconds": null
+  },
+  "process_reasoning": {
+    "status": "unavailable",
+    "allowed_output_statuses": [
+      "proposed",
+      "uncertain",
+      "not_observed",
+      "unavailable"
+    ]
+  },
+  "validation_flags": {
+    "factory_camera_validated": false,
+    "production_action_model_ready": false,
+    "external_factory_validated": false,
+    "production_process_model_ready": false
+  },
+  "privacy": {
+    "identity_recognition": false,
+    "face_recognition": false,
+    "clothing_reid": false,
+    "employee_performance_scoring": false
+  }
+}

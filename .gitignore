@@ -1,0 +1,52 @@
+.venv/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local runtime data and generated delivery artifacts.
+outputs/
+delivery/
+.agents/
+
+# Recoverable local master-loop state is not source control content.
+MASTER_LOOP_STATE.json
+MASTER_LOOP_LEDGER.jsonl
+
+# Interrupted uploads, diagnostics, logs, and crash residue.
+*.part
+*.tmp
+*.dmp
+*.crdownload
+*.log
+
+# Local credentials and editor state.
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.idea/
+.vscode/
+.codex_tmp/
+
+# Externally supplied model binaries are intentionally not redistributed.
+*.onnx
+*.task
+
+# Private or raw workstation inputs should remain outside source control.
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.xlsx
+*.xls
+*.xlsm
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.pdf
+*.zip
+*.7z

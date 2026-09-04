@@ -1,0 +1,29 @@
+{
+  "schema_version": "external_hand_model_requirement_v1",
+  "project": "Factory Multimodal Action Process Lab",
+  "model": {
+    "project_name": "MediaPipe Hand Landmarker",
+    "model_name": "HandLandmarker (full)",
+    "model_version": "float16/1",
+    "expected_local_path": "models/hand_pose/hand_landmarker.task",
+    "official_url": "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+    "official_overview_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker",
+    "official_python_guide_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/python",
+    "official_model_card_url": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Hand%20Tracking%20%28Lite_Full%29%20with%20Fairness%20Oct%202021.pdf",
+    "recorded_upstream_license": "Apache License 2.0 (as identified by the upstream model card)",
+    "public_distribution": "not_included",
+    "distribution_note": "Confirm current upstream license and notice obligations before redistributing the binary."
+  },
+  "model_structure": {
+    "landmarks_per_detected_hand": 21,
+    "handedness_is_not_used_to_override_anatomical_side": true
+  },
+  "governance": {
+    "training_performed": false,
+    "fine_tuning_performed": false,
+    "mock_landmarks_allowed": false,
+    "fixed_missing_hand_shape_allowed": false,
+    "grasp_claim_allowed": false,
+    "production_use_validated": false
+  }
+}

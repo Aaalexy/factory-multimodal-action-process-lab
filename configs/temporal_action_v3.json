@@ -1,0 +1,127 @@
+{
+  "schema_version": "temporal_action_v3_config_v1",
+  "engine": {
+    "engine_id": "temporal_action_engine_v3",
+    "engine_kind": "interpretable_rules",
+    "rule_version": "temporal_action_rules_v3.0.0",
+    "shadow_mode": true,
+    "publishes_primary_action_events": false,
+    "description": "Shadow-only explainable temporal rules; Phase B action_events remain the primary timeline until a later accepted checkpoint."
+  },
+  "parameter_profile": {
+    "parameter_profile_id": "temporal_action_v3_default_2p5s",
+    "parameter_profile_sha256": "7cdc9107bf3f7107105a6a451349c34e88e1fa87eca9d5538bfe369a793e0971",
+    "hash_scope": "canonical_utf8_json_of_parameter_payload_sorted_keys_compact"
+  },
+  "parameter_payload": {
+    "temporal": {
+      "analysis_fps": 8.0,
+      "temporal_context_seconds": 2.5,
+      "start_confirmation_seconds": 0.5,
+      "stop_confirmation_seconds": 0.5,
+      "bounded_uncertain_gap_seconds": 0.375,
+      "change_point_minimum_support_seconds": 0.5
+    },
+    "feature_buffer": {
+      "lanes": ["left", "right", "bilateral"],
+      "partition_keys": ["person_ref", "lock_epoch", "anatomical_side"],
+      "hard_boundary_states": [
+        "lost",
+        "off_frame",
+        "awaiting_manual_relock",
+        "severe_occlusion",
+        "long_missing",
+        "person_changed",
+        "lock_epoch_changed"
+      ],
+      "retain_raw_frame_evidence": true
+    },
+    "body_feature_policy": {
+      "enabled": true,
+      "features": [
+        "wrist_velocity",
+        "wrist_speed",
+        "wrist_displacement",
+        "wrist_extension",
+        "motion_direction",
+        "motion_amplitude",
+        "joint_reliability"
+      ],
+      "missing_behavior": "uncertain_or_lost_without_synthetic_geometry"
+    },
+    "hand_feature_policy": {
+      "enabled": true,
+      "eligibility": "qualified_only",
+      "required_quality_state": "qualified",
+      "require_action_feature_eligible": true,
+      "allowed_features": ["hand_motion_feature", "hand_shape_feature"],
+      "forbidden_semantics": [
+        "grasp_detected",
+        "true_grab",
+        "real_pick",
+        "assembly_completed"
+      ],
+      "missing_behavior": "body_pose_temporal_path_continues"
+    },
+    "object_feature_policy": {
+      "enabled": false,
+      "provider": null,
+      "model_version": null,
+      "default_state": "unavailable",
+      "require_real_object_tracks": true,
+      "missing_behavior": "no_object_features_and_no_object_semantic_action"
+    },
+    "semantic_policy": {
+      "action_vocabulary": [
+        "idle",
+        "reach",
+        "retract",
+        "lift",
+        "lower",
+        "move",
+        "carry",
+        "place",
+        "hold",
+        "release",
+        "rotate",
+        "push",
+        "pull",
+        "transition",
+        "unknown",
+        "lost"
+      ],
+      "object_evidence_required_actions": [
+        "carry",
+        "place",
+        "hold",
+        "release"
+      ],
+      "object_semantic_requirements": [
+        "object_feature_state_available",
+        "source_object_track_ids_nonempty",
+        "source_interaction_ids_nonempty"
+      ],
+      "pose_only_fallback_actions": ["move", "reach", "lower", "unknown"],
+      "unknown_fallback_enabled": true
+    },
+    "automatic_output_policy": {
+      "allowed_statuses": ["proposed", "uncertain"],
+      "reviewer": null,
+      "reviewed_at": null,
+      "training_approval": "pending",
+      "training_eligible": false
+    }
+  },
+  "learned_model_adapter": {
+    "provider": null,
+    "model_version": null,
+    "status": "unavailable",
+    "reason": "not_configured: no learned temporal action model is installed or trained"
+  },
+  "validation_flags": {
+    "factory_camera_validated": false,
+    "production_action_model_ready": false,
+    "external_factory_validated": false,
+    "production_process_model_ready": false
+  }
+}

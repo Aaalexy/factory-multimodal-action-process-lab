@@ -1,0 +1,32 @@
+{
+  "schema_version": "public_source_inventory_v1",
+  "project": "Factory Multimodal Action Process Lab",
+  "generated_before_source_copy": true,
+  "source_access": "not_distributed",
+  "status": "public_snapshot",
+  "public_scope": "Target-only source-lineage inventory. Original paths, source names, hashes, byte counts, and timestamps are intentionally omitted.",
+  "imports": [
+    {"target_path": "src/legacy_pose/frame_source.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/video_reader.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/pose_postprocess.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/pose_detector.py", "mode": "adapted_runtime_component", "adapted": true},
+    {"target_path": "src/legacy_pose/joint_observation_validator.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/pose_smoother.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/manual_selection.py", "mode": "adapted_runtime_component", "adapted": true},
+    {"target_path": "src/legacy_pose/person_tracker.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/skeleton_model.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/stickman_renderer.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/action_analysis.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/legacy_pose/export_video.py", "mode": "retained_runtime_component", "adapted": false},
+    {"target_path": "src/web/offline_worker.py", "mode": "adapted_worker_component", "adapted": true},
+    {"target_path": "tests/migrated_reference/test_video_io.py", "mode": "retained_test", "adapted": false},
+    {"target_path": "tests/migrated_reference/test_person_tracker.py", "mode": "retained_test", "adapted": false},
+    {"target_path": "tests/migrated_reference/test_action_duration_visibility_accuracy_repair.py", "mode": "retained_test", "adapted": false},
+    {"target_path": "tests/validation_tools.py", "mode": "retained_test_helper", "adapted": false},
+    {"target_path": "configs/action_analysis.yaml", "mode": "retained_configuration", "adapted": false}
+  ],
+  "excluded_artifacts": [
+    {"path": "models/yolov8n-pose.onnx", "reason": "Binary redistribution authorization is not documented in this portfolio repository."},
+    {"path": "models/hand_pose/hand_landmarker.task", "reason": "Binary omitted pending an independent review of upstream redistribution obligations."}
+  ]
+}
